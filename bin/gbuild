@@ -230,6 +230,9 @@ package_name = build_desc["name"] or raise "must supply name"
 package_name = sanitize(package_name, "package name")
 
 if enable_cache
+  if(File.exist?("cache"))
+    system "sudo chmod -R 777 cache"
+  end
   FileUtils.mkdir_p(File.join(cache_dir, "common"))
   FileUtils.mkdir_p(File.join(cache_dir, package_name))
 end
@@ -313,6 +316,10 @@ suites.each do |suite|
 
     if enable_cache && !@options[:cache_ro]
       info "Grabbing cache from target"
+	  if(File.exist?("cache"))
+        system "sudo chmod -R 777 cache"
+        FileUtils.rm_rf("cache/common")
+      end
       system! "copy-from-target #{@quiet_flag} cache/#{package_name}/ #{cache_dir}"
       system! "copy-from-target #{@quiet_flag} cache/common/ #{cache_dir}"
     end
